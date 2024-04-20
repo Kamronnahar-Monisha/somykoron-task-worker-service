@@ -48,4 +48,4 @@ if __name__ == '__main__':
     num_workers = 3
     for _ in range(num_workers):
         threading.Thread(target=worker).start()
-    app.run(debug=True, port=8001)
+    app.run(debug=True)
