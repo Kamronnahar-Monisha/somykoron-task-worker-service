@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,jsonify
 import redis
 import threading
 import json
@@ -8,27 +8,60 @@ load_dotenv()
 
 app = Flask(__name__)
 redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"))
+#redis_client = redis.Redis(host='localhost', port=6379)
 
 
 
-
-
-
-
+#route for presenting the results list in redis
 @app.route('/')
 def home():
-     while True:
+    result_list = []
+    while redis_client.llen('results'):
+        result_data = redis_client.rpop('results')
+        if result_data:  
+            # deserialized the json string data 
+            decentralized_data = json.loads(result_data.decode('utf-8'))
+            print(decentralized_data)
+            result_list.append(decentralized_data)
+    return jsonify(result_list)
+        
+    
+
+
+
+def process_task_addition(task_data):
+    # Process task here
+    result = task_data['a'] + task_data['b']
+    return result
+
+
+def process_task_multiplication(task_data):
+    # Process task here
+    result = task_data['a'] * task_data['b']
+    return result
+
+def handle_message(message):
+    print(message)
+    if message['request'] == 'addition':
+        result = process_task_addition(message)
+    else:
+        result = process_task_multiplication(message)
+    print(result)
+    return {'result': result}
+
+
+
+def worker():
+    while True:
         task_data = redis_client.rpop('tasks')
-        # deserialized the json string data 
-        deserialized_data = json.loads(task_data)
-        if deserialized_data:
-            print(deserialized_data)
-            return "ok"
-        else:
-            return "not ok"
-            # result = process_task(task_data)
-            # # Store result in Redis
-            # redis_client.lpush('results', result)
+        if task_data:
+            # deserialized the json string data 
+            decentralized_data = json.loads(task_data.decode('utf-8'))
+            print(decentralized_data)
+            result = handle_message(decentralized_data)
+            print(result)
+            # Store result in Redis
+            redis_client.lpush('results', json.dumps(result))
 
 # def process_task_addition(task_data):
 #     # Process task here
