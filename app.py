@@ -15,15 +15,16 @@ redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_P
 #route for presenting the results list in redis
 @app.route('/')
 def home():
-    result_list = []
-    while redis_client.llen('results'):
-        result_data = redis_client.rpop('results')
-        if result_data:  
-            # deserialized the json string data 
-            decentralized_data = json.loads(result_data.decode('utf-8'))
-            print(decentralized_data)
-            result_list.append(decentralized_data)
-    return jsonify(result_list)
+    # result_list = []
+    # while redis_client.llen('results'):
+    #     result_data = redis_client.rpop('results')
+    #     if result_data:  
+    #         # deserialized the json string data 
+    #         decentralized_data = json.loads(result_data.decode('utf-8'))
+    #         print(decentralized_data)
+    #         result_list.append(decentralized_data)
+    # return jsonify(result_list)
+    return "welcome to worker service..."
         
     
 
