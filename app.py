@@ -6,6 +6,29 @@ import json
 app = Flask(__name__)
 redis_client = redis.Redis(host='localhost', port=6379)
 
+def process_task_addition(task_data):
+    # Process task here
+    result = task_data['a'] + task_data['b']
+    return result
+
+
+def process_task_multiplication(task_data):
+    # Process task here
+    result = task_data['a'] * task_data['b']
+    return result
+
+def handle_message(message):
+    task_data = message['data'].decode('utf-8')
+    # deserialized the json string data 
+    deserialized_data = json.loads(task_data)
+    print(deserialized_data)
+    if deserialized_data['request'] == 'addition':
+        result = process_task_addition(deserialized_data)
+    else:
+        result = process_task_multiplication(deserialized_data)
+    print(result)
+    # Publish result to Redis channel
+    redis_client.publish('results', result)
 
 def worker():
     # Subscribe to the 'tasks' channel
