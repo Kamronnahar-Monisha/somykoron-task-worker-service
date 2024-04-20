@@ -6,6 +6,11 @@ import json
 app = Flask(__name__)
 redis_client = redis.Redis(host='localhost', port=6379)
 
+
+@app.route('/')
+def home():
+    return 'welcome to worker service'
+
 def process_task_addition(task_data):
     # Process task here
     result = task_data['a'] + task_data['b']
@@ -43,4 +48,4 @@ if __name__ == '__main__':
     num_workers = 3
     for _ in range(num_workers):
         threading.Thread(target=worker).start()
-    app.run(debug=True)
+    app.run(debug=True, port=8001)
