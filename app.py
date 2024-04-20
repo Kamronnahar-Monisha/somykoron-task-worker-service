@@ -12,7 +12,13 @@ redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_P
 
 @app.route('/')
 def home():
-    return 'welcome to worker service'
+    pubsub = redis_client.pubsub()
+    pubsub.subscribe('results')
+    for message in pubsub.listen():
+        if message['type'] == 'message':
+            return message['data']
+        else:
+            return "no result"
 
 def process_task_addition(task_data):
     # Process task here
