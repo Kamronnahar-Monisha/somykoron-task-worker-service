@@ -2,9 +2,12 @@ from flask import Flask
 import redis
 import threading
 import json
+from dotenv import load_dotenv
+import os
+load_dotenv() 
 
 app = Flask(__name__)
-redis_client = redis.Redis(host='localhost', port=6379)
+redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"))
 
 
 @app.route('/')
