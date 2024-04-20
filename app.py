@@ -7,7 +7,7 @@ import os
 load_dotenv() 
 
 app = Flask(__name__)
-redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"))
+redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"),db=1)
 #redis_client = redis.Redis(host='localhost', port=6379)
 
 
@@ -60,4 +60,4 @@ if __name__ == '__main__':
     num_workers = 3
     for _ in range(num_workers):
         threading.Thread(target=worker).start()
-    app.run()
+    app.run(debug=True)
